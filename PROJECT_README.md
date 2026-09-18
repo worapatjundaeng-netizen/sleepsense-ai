@@ -37,6 +37,17 @@ uvicorn main:app --port 8000
 
 จากนั้นเปิดเบราว์เซอร์ไปที่ `http://localhost:8000`
 
+## Deploy ให้คนอื่นใช้งานได้จริง
+
+โปรเจกต์นี้ต้องการเซิร์ฟเวอร์ที่รันโค้ด Python ได้ (ไม่ใช่แค่ static hosting) มีไฟล์ `render.yaml` เตรียมไว้ให้แล้วสำหรับ [Render.com](https://render.com):
+
+1. Push โปรเจกต์นี้ขึ้น GitHub
+2. ที่ Render.com กด "New +" -> "Web Service" -> เชื่อมกับ repo นี้
+3. Render จะอ่าน `render.yaml` แล้วตั้งค่า build/start command ให้อัตโนมัติ
+4. กด Deploy รอสักครู่ จะได้ลิงก์สาธารณะ
+
+**ข้อจำกัดของ free tier ที่ควรรู้:** การวิเคราะห์ไฟล์เสียงยาว (เต็มคืน) ใช้เวลา 1-2 นาที ซึ่งอาจเกิน request timeout ของแผนฟรีบางเจ้า และ RAM ของแผนฟรีอาจไม่พอสำหรับโหลดโมเดล PyTorch — ถ้าเจอปัญหานี้อาจต้องอัปเกรดแผนที่จ่ายเงินขั้นต่ำ
+
 ## Pipeline โดยสรุป
 
 1. **เตรียมข้อมูล** (`scripts/prepare_dataset.py`) — ตัดเสียงแต่ละคนเป็นช่วงละ 10 วินาที ติด label ว่า "apnea" หรือ "ปกติ" จากการเทียบกับเวลาที่มี annotation (Obstructive/Central/Mixed Apnea, Hypopnea) แบ่ง train/validation ตามรายคน

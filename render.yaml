@@ -1,0 +1,11 @@
+# Deploy config for Render.com (https://render.com)
+# On Render's dashboard: "New +" -> "Web Service" -> connect this repo.
+# Render auto-detects this file and fills in the settings below.
+
+services:
+  - type: web
+    name: sleepsense-ai
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT
