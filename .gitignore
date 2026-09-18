@@ -1,0 +1,14 @@
+# Raw dataset (large, keep local only — see README.txt for source)
+2021[0-9][0-9][0-9][0-9][A-Z]/
+2022[0-9][0-9][0-9][0-9][A-Z]/
+
+# Downloaded/generated test audio (large, not part of the project itself)
+test_clips/
+
+# Python
+__pycache__/
+*.pyc
+
+# OS
+.DS_Store
+Thumbs.db

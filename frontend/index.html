@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SleepSense — ตรวจคัดกรองภาวะหยุดหายใจขณะหลับ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@500;600;700&family=Sarabun:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <div class="hero-glow" aria-hidden="true"></div>
+      <div class="brand">
+        <span class="wave-icon" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+        SleepSense AI
+      </div>
+      <h1>ตรวจคัดกรองภาวะหยุดหายใจขณะหลับ</h1>
+      <p class="subtitle">อัปโหลดไฟล์เสียงขณะนอนหลับ ระบบจะวิเคราะห์ด้วย AI และสรุปช่วงเวลาที่มีแนวโน้มเป็นภาวะหยุดหายใจขณะหลับให้</p>
+
+      <div class="steps">
+        <div class="step">
+          <span class="step-num">1</span>
+          <div>
+            <div class="step-title">อัปโหลดเสียง</div>
+            <div class="step-sub">ไฟล์เสียงขณะนอนหลับทั้งคืน</div>
+          </div>
+        </div>
+        <div class="step-line"></div>
+        <div class="step">
+          <span class="step-num">2</span>
+          <div>
+            <div class="step-title">AI วิเคราะห์</div>
+            <div class="step-sub">ตรวจจับเสียงผิดปกติทีละช่วง</div>
+          </div>
+        </div>
+        <div class="step-line"></div>
+        <div class="step">
+          <span class="step-num">3</span>
+          <div>
+            <div class="step-title">ดูผลสรุป</div>
+            <div class="step-sub">ไทม์ไลน์และระดับความเสี่ยง</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="card" id="upload-card">
+      <div class="dropzone" id="dropzone">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+          <path d="M12 16V4M12 4l-4 4M12 4l4 4" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div class="primary-text">ลากไฟล์เสียงมาวางที่นี่ หรือ <span>เลือกไฟล์</span></div>
+        <div class="hint">รองรับไฟล์ .wav และ .flac</div>
+      </div>
+      <input type="file" id="file-input" accept=".wav,.flac" hidden />
+
+      <div class="file-chip" id="file-chip">
+        <span class="name" id="file-name"></span>
+        <span class="size" id="file-size"></span>
+        <button id="clear-file" title="ลบไฟล์">×</button>
+      </div>
+
+      <div class="actions">
+        <button class="btn" id="analyze-btn" disabled>วิเคราะห์เสียง</button>
+      </div>
+
+      <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <span>กำลังวิเคราะห์ไฟล์เสียง... ไฟล์ยาวอาจใช้เวลา 1-2 นาที</span>
+      </div>
+    </div>
+
+    <div class="error-box" id="error-box"></div>
+
+    <div id="results">
+      <div class="severity-banner" id="severity-banner">
+        <span class="icon-badge" id="severity-badge"><span id="severity-icon">●</span></span>
+        <div>
+          <div class="label" id="severity-label">—</div>
+          <div class="sub" id="severity-sub">—</div>
+        </div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="value" id="stat-duration">—</div>
+          <div class="label">ระยะเวลาที่บันทึก
+            <span class="info-tip" tabindex="0" data-tip="ความยาวไฟล์เสียงทั้งหมดที่นำมาวิเคราะห์">ⓘ</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="value" id="stat-events">—</div>
+          <div class="label">จำนวนเหตุการณ์
+            <span class="info-tip" tabindex="0" data-tip="ช่วงเวลาต่อเนื่องอย่างน้อย 20 วินาทีที่ AI ตรวจพบเสียงคล้ายภาวะหยุด/ลดการหายใจ ไม่ใช่จำนวนครั้งที่ยืนยันทางการแพทย์">ⓘ</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="value" id="stat-rate">—</div>
+          <div class="label">เหตุการณ์/ชั่วโมง
+            <span class="info-tip" tabindex="0" data-tip="จำนวนเหตุการณ์เฉลี่ยต่อชั่วโมง ใกล้เคียงหลักการของค่า AHI ที่ใช้ประเมินความรุนแรงทางการแพทย์">ⓘ</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="value" id="stat-ratio">—</div>
+          <div class="label">สัดส่วนเวลาที่ผิดปกติ
+            <span class="info-tip" tabindex="0" data-tip="เปอร์เซ็นต์ของเวลานอนทั้งหมดที่ AI ทายว่ามีแนวโน้มผิดปกติ (ไม่ได้กรองเหตุการณ์สั้นออก)">ⓘ</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-title">ระดับความเสี่ยงตลอดการนอน</div>
+      <div class="timeline-card">
+        <div class="chart-wrap" id="chart-wrap">
+          <svg id="chart-svg" viewBox="0 0 1000 260" preserveAspectRatio="none"></svg>
+          <div class="chart-tooltip" id="chart-tooltip"></div>
+        </div>
+        <div class="timeline-axis" id="timeline-axis"></div>
+        <div class="timeline-legend">
+          <span class="swatch swatch-normal"></span>ปกติ
+          <span class="swatch swatch-risk"></span>เกินเกณฑ์ 50% (แนวโน้ม apnea)
+        </div>
+      </div>
+
+      <div class="section-title">รายละเอียดเหตุการณ์</div>
+      <div class="event-table-wrap">
+        <table class="event-table" id="event-table">
+          <thead>
+            <tr><th>เวลาเริ่ม</th><th>ระยะเวลา</th><th>ความมั่นใจของโมเดล</th></tr>
+          </thead>
+          <tbody id="event-tbody"></tbody>
+        </table>
+        <div class="no-events" id="no-events" style="display:none;">ไม่พบเหตุการณ์ที่เข้าเกณฑ์ในไฟล์นี้</div>
+      </div>
+
+      <div class="disclaimer">
+        ผลลัพธ์นี้มาจากการประมวลผลด้วยโมเดล AI ต้นแบบ (ความแม่นยำจากการทดสอบ ~76%) ใช้สำหรับ<strong>คัดกรองเบื้องต้นเท่านั้น</strong>
+        ไม่ใช่การวินิจฉัยทางการแพทย์ หากมีความกังวลเกี่ยวกับการนอนหลับหรือการหายใจขณะหลับ ควรปรึกษาแพทย์ผู้เชี่ยวชาญด้านการนอนหลับ
+      </div>
+
+      <div class="reset-row">
+        <button class="link-btn" id="reset-btn">วิเคราะห์ไฟล์อื่น</button>
+      </div>
+    </div>
+
+    <footer class="page-footer">
+      SleepSense AI · โมเดล CNN วิเคราะห์เสียง (PyTorch) · โปรเจกต์ต้นแบบเพื่อการศึกษา
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
