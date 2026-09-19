@@ -3,36 +3,49 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>SleepSense — ตรวจคัดกรองภาวะหยุดหายใจขณะหลับ</title>
+  <title>SleepCheck AI — ตรวจคัดกรองภาวะหยุดหายใจขณะหลับ</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@500;600;700&family=Sarabun:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="wrap">
-    <header class="hero">
-      <div class="hero-glow" aria-hidden="true"></div>
-      <div class="brand">
-        <span class="wave-icon" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
-        SleepSense AI
-      </div>
-      <h1>ตรวจคัดกรองภาวะหยุดหายใจขณะหลับ</h1>
-      <p class="subtitle">อัปโหลดไฟล์เสียงขณะนอนหลับ ระบบจะวิเคราะห์ด้วย AI และสรุปช่วงเวลาที่มีแนวโน้มเป็นภาวะหยุดหายใจขณะหลับให้</p>
+  <nav class="topnav">
+    <a href="#top" class="brand">
+      <span class="wave-icon" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+      SleepCheck AI
+    </a>
+    <div class="nav-links">
+      <a href="#top">หน้าแรก</a>
+      <a href="#how-it-works">วิธีการทำงาน</a>
+      <a href="#analyze" class="nav-cta">วิเคราะห์เสียง</a>
+    </div>
+  </nav>
 
-      <div class="steps">
+  <div class="wrap">
+    <header class="hero" id="top">
+      <div class="hero-glow" aria-hidden="true"></div>
+      <h1 class="gradient-text">ฟังเสียงคุณตอนหลับ บอกความเสี่ยง<br />ภาวะหยุดหายใจขณะหลับ</h1>
+      <p class="subtitle">เว็บแอปพลิเคชันที่ให้ผู้ใช้อัปโหลดหรืออัดเสียงขณะนอนหลับ แล้วให้ AI ช่วยคัดกรองสัญญาณเบื้องต้นของภาวะหยุดหายใจขณะหลับ (Sleep Apnea) ก่อนตัดสินใจพบแพทย์</p>
+
+      <div class="hero-actions">
+        <a href="#analyze" class="btn btn-lg">เริ่มตรวจเสียง →</a>
+        <a href="#how-it-works" class="btn-outline">ดูวิธีการทำงาน</a>
+      </div>
+
+      <div class="steps" id="how-it-works">
         <div class="step">
           <span class="step-num">1</span>
           <div>
-            <div class="step-title">อัปโหลดเสียง</div>
-            <div class="step-sub">ไฟล์เสียงขณะนอนหลับทั้งคืน</div>
+            <div class="step-title">อัปโหลด/อัดเสียง</div>
+            <div class="step-sub">ไฟล์เสียงหรืออัดเสียงสดจากไมค์</div>
           </div>
         </div>
         <div class="step-line"></div>
         <div class="step">
           <span class="step-num">2</span>
           <div>
-            <div class="step-title">AI วิเคราะห์</div>
+            <div class="step-title">AI วิเคราะห์เสียง</div>
             <div class="step-sub">ตรวจจับเสียงผิดปกติทีละช่วง</div>
           </div>
         </div>
@@ -40,28 +53,57 @@
         <div class="step">
           <span class="step-num">3</span>
           <div>
-            <div class="step-title">ดูผลสรุป</div>
+            <div class="step-title">แสดงผลคัดกรอง</div>
             <div class="step-sub">ไทม์ไลน์และระดับความเสี่ยง</div>
+          </div>
+        </div>
+        <div class="step-line"></div>
+        <div class="step">
+          <span class="step-num">4</span>
+          <div>
+            <div class="step-title">ตัดสินใจพบแพทย์</div>
+            <div class="step-sub">คัดกรองเบื้องต้นก่อนตรวจจริง</div>
           </div>
         </div>
       </div>
     </header>
 
-    <div class="card" id="upload-card">
-      <div class="dropzone" id="dropzone">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-          <path d="M12 16V4M12 4l-4 4M12 4l4 4" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        <div class="primary-text">ลากไฟล์เสียงมาวางที่นี่ หรือ <span>เลือกไฟล์</span></div>
-        <div class="hint">รองรับไฟล์ .wav และ .flac</div>
+    <div class="card" id="analyze">
+      <div class="mode-tabs">
+        <button class="mode-tab active" id="tab-upload" data-mode="upload">อัปโหลดไฟล์</button>
+        <button class="mode-tab" id="tab-record" data-mode="record">เริ่มอัดเสียง</button>
       </div>
-      <input type="file" id="file-input" accept=".wav,.flac" hidden />
 
-      <div class="file-chip" id="file-chip">
-        <span class="name" id="file-name"></span>
-        <span class="size" id="file-size"></span>
-        <button id="clear-file" title="ลบไฟล์">×</button>
+      <div class="mode-panel" id="mode-upload">
+        <div class="dropzone" id="dropzone">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path d="M12 16V4M12 4l-4 4M12 4l4 4" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <div class="primary-text">ลากไฟล์เสียงมาวางที่นี่ หรือ <span>เลือกไฟล์</span></div>
+          <div class="hint">รองรับไฟล์ .wav และ .flac</div>
+        </div>
+        <input type="file" id="file-input" accept=".wav,.flac" hidden />
+
+        <div class="file-chip" id="file-chip">
+          <span class="name" id="file-name"></span>
+          <span class="size" id="file-size"></span>
+          <button id="clear-file" title="ลบไฟล์">×</button>
+        </div>
+      </div>
+
+      <div class="mode-panel" id="mode-record" hidden>
+        <div class="record-area">
+          <button class="record-btn" id="record-btn" aria-label="เริ่มอัดเสียง">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" id="record-icon">
+              <circle cx="12" cy="12" r="8" />
+            </svg>
+          </button>
+          <div class="record-status" id="record-status">กดเพื่อเริ่มอัดเสียง</div>
+          <div class="record-timer" id="record-timer" hidden>00:00</div>
+          <audio id="record-preview" hidden controls></audio>
+          <button class="link-btn" id="record-discard" hidden>อัดใหม่</button>
+        </div>
       </div>
 
       <div class="actions">
@@ -147,7 +189,7 @@
     </div>
 
     <footer class="page-footer">
-      SleepSense AI · โมเดล CNN วิเคราะห์เสียง (PyTorch) · โปรเจกต์ต้นแบบเพื่อการศึกษา
+      SleepCheck AI · โมเดล CNN วิเคราะห์เสียง (PyTorch) · โปรเจกต์ต้นแบบเพื่อการศึกษา
     </footer>
   </div>
 
