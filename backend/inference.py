@@ -38,15 +38,6 @@ class ApneaAnalyzer:
         )
         self.to_db = torchaudio.transforms.AmplitudeToDB()
 
-    def _load_audio(self, path: str) -> np.ndarray:
-        audio, sr = sf.read(path, dtype="float32", always_2d=True)
-        audio = audio.mean(axis=1)  # downmix to mono
-        if sr != SAMPLE_RATE:
-            waveform = torch.from_numpy(audio).unsqueeze(0)
-            waveform = torchaudio.functional.resample(waveform, sr, SAMPLE_RATE)
-            audio = waveform.squeeze(0).numpy()
-        return audio
-
     def _score_window(self, chunk: np.ndarray) -> float:
         waveform = torch.from_numpy(chunk).unsqueeze(0)
         spec = self.to_db(self.mel(waveform))
@@ -56,15 +47,34 @@ class ApneaAnalyzer:
         return torch.sigmoid(logit).item()
 
     def analyze_file(self, path: str, threshold: float = DEFAULT_THRESHOLD) -> dict:
-        audio = self._load_audio(path)
+        # Stream the file window-by-window instead of loading it fully into memory --
+        # a full-night recording read all at once can easily exceed the RAM available
+        # on small hosting plans (e.g. Render's free 512MB tier).
+        info = sf.info(path)
+        native_sr = info.samplerate
+        duration_sec = info.frames / native_sr
         window_samples = int(WINDOW_SEC * SAMPLE_RATE)
-        n_windows = len(audio) // window_samples
-        duration_sec = len(audio) / SAMPLE_RATE
+        block_frames = int(round(WINDOW_SEC * native_sr))
 
         windows = []
-        for i in range(n_windows):
-            chunk = audio[i * window_samples: (i + 1) * window_samples]
-            prob = self._score_window(chunk)
+        for block in sf.blocks(path, blocksize=block_frames, dtype="float32", always_2d=True):
+            if len(block) < block_frames:
+                break  # drop a short trailing partial window, same as before
+
+            mono = block.mean(axis=1)
+            if native_sr != SAMPLE_RATE:
+                waveform = torchaudio.functional.resample(
+                    torch.from_numpy(mono).unsqueeze(0), native_sr, SAMPLE_RATE
+                )
+                mono = waveform.squeeze(0).numpy()
+            if len(mono) != window_samples:
+                if len(mono) > window_samples:
+                    mono = mono[:window_samples]
+                else:
+                    mono = np.pad(mono, (0, window_samples - len(mono)))
+
+            prob = self._score_window(mono)
+            i = len(windows)
             windows.append({
                 "start_sec": round(i * WINDOW_SEC, 1),
                 "end_sec": round((i + 1) * WINDOW_SEC, 1),
@@ -72,6 +82,7 @@ class ApneaAnalyzer:
                 "is_apnea": prob >= threshold,
             })
 
+        n_windows = len(windows)
         events = self._merge_into_events(windows)
         hours = duration_sec / 3600 if duration_sec > 0 else 0
         apnea_windows = [w for w in windows if w["is_apnea"]]
